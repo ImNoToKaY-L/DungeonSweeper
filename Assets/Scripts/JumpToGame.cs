@@ -10,6 +10,7 @@ public class JumpToGame : MonoBehaviour
     void Start()
     {
         this.GetComponent<Button>().onClick.AddListener(OnClick);
+        Debug.Log("ITISATEST");
     }
 
     // Update is called once per frame
