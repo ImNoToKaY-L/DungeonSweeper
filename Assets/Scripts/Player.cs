@@ -166,7 +166,7 @@ public class Player : MovingObject
 					if (ValidGrid(currentPos))
 					{
 						int nearestUnitDis = GetNearestUnitDistance(currentPos);
-						if (nearestUnitDis<=9&&nearestUnitDis>0)
+						if (nearestUnitDis<=20&&nearestUnitDis>0)
 						{
 							Instantiate(NumberTiles[nearestUnitDis - 1], currentPos, Quaternion.identity).transform.SetParent(GameManager.instance.boardScript.transform);
 						}
