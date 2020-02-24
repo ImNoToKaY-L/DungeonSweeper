@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class BoardManager : MonoBehaviour
 {
@@ -32,6 +34,9 @@ public class BoardManager : MonoBehaviour
                 instance.transform.SetParent(boardHolder);
             }
         }
+
+        GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text="Map size: "+rows+"*"+columns+"\n"+"Player fov: 1";
+
         Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity);
 
         RandomMapGenerating();
