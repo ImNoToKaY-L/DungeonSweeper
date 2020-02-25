@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.UI;
 
 
@@ -14,6 +15,7 @@ public class BoardManager : MonoBehaviour
     public GameObject[] wallTiles;
     public GameObject[] itemTiles;
     public GameObject[] playerTile;
+    private Player player;
     Transform boardHolder;
 
     private const int ENEMY_TILE = 0;
@@ -21,9 +23,18 @@ public class BoardManager : MonoBehaviour
 
     public List<Vector3> obstacles;
     public List<Vector3> hasUnits = new List<Vector3>();
+    public int maxWallSpawnCount = 40;
+
     private int hardLevel = 1;
     public void SetupScene()
     {
+        if (GameObject.Find("Board")!=null)
+        {
+            Destroy(GameObject.Find("Board"));
+            obstacles.Clear();
+            hasUnits.Clear();
+        }
+
         boardHolder = new GameObject("Board").transform;
         for (int x = 0; x < columns-1; x++)
         {
@@ -35,24 +46,32 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text="Map size: "+rows+"*"+columns+"\n"+"Player fov: 1";
 
-        Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity);
-
+        Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         RandomMapGenerating();
+
+        GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV+"\n"
+               +"Player detection: "+player.DistanceDetection;
+
 
 
     }
 
+
+    private int RandomNumber(int lowerbound, int upperbound)
+    {
+        return UnityEngine.Random.Range(lowerbound,upperbound);
+    }
+
+
     private void RandomMapGenerating()
     {
-        int maxWallSpawnCount = 40;
-
         for (int i = 0; i < maxWallSpawnCount; i++)
         {
-            int xORy = Random.Range(0, 2);//0 stands for X, 1 stands for Y
-            int length = Random.Range(1, 6);
-            Vector3 startPos = new Vector3(Random.Range(1, 23), Random.Range(1, 23), 0f);
+            int xORy = RandomNumber(0, 2);//0 stands for X, 1 stands for Y
+            int length = RandomNumber(1, 6);
+            Vector3 startPos = new Vector3(RandomNumber(1, Convert.ToInt32(columns * 0.8) ), RandomNumber(1, Convert.ToInt32(rows*0.8)), 0f);
             for (int j = 1; j <= length; j++)
             {
                 Vector3 candidate;
@@ -94,7 +113,7 @@ public class BoardManager : MonoBehaviour
         bool unitSpawned = false;
         while (!unitSpawned)
         {
-            Vector3 candidate = new Vector3(Random.Range(1, 28), Random.Range(1, 28), 0);
+            Vector3 candidate = new Vector3(RandomNumber(1, columns-2), RandomNumber(1, rows-2), 0);
             if (!GridOccupied(candidate)&&PathCheck.AStarSearchPath(candidate,obstacles))
             {
                 unitSpawned = true;

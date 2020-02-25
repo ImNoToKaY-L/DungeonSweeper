@@ -35,7 +35,6 @@ using System.Collections;
 			Destroy(gameObject);
 
 		}
-		enemies = new List<Enemy>();
 		
 
 		//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
@@ -52,9 +51,9 @@ using System.Collections;
 
 		
 		//Initializes the game for each level.
-		void InitGame()
+		public void InitGame()
 		{
-
+		enemies = new List<Enemy>();
 		boardScript.SetupScene();
 		playersTurn = true;
 		playerHasKey = false;
@@ -68,6 +67,7 @@ using System.Collections;
 
 		SceneManager.LoadScene("Body");
 	}
+
 
 	private void Update()
 	{

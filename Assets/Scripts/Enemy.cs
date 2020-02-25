@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
     private List<Vector3> hadSearch = new List<Vector3>();
     private List<Vector3> obstacle;
     public GameObject[] pathPainting;
+    Transform Path;
     //The grid that this unit will go to in the next movement
     private Vector3 targetGrid;
     bool skipMove = true;
@@ -24,6 +25,9 @@ public class Enemy : MonoBehaviour
     {
         if (initiating)
         {
+            Destroy(GameObject.Find("PathPainting"));
+
+            Path = new GameObject("PathPainting").transform;
             initiating = false;
             startPos = this.transform.position;
             endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
@@ -107,7 +111,7 @@ public class Enemy : MonoBehaviour
 
             else
             {
-                Instantiate(pathPainting[0], next, Quaternion.identity);
+                Instantiate(pathPainting[0], next, Quaternion.identity).transform.SetParent(Path);
 
             }
 

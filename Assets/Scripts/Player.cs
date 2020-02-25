@@ -13,7 +13,8 @@ public class Player : MovingObject
 	private bool hasMoved = false;
 	private List<Vector3> existingUnits;
 	private List<Vector3> obstacles;
-	private int PlayerFOV = 1;
+	public int PlayerFOV = 1;
+	public int DistanceDetection = 20;
 	public GameObject[] NumberTiles;
 	protected override void OnCantMove<T>(T component)
     {
@@ -166,7 +167,7 @@ public class Player : MovingObject
 					if (ValidGrid(currentPos))
 					{
 						int nearestUnitDis = GetNearestUnitDistance(currentPos);
-						if (nearestUnitDis<=20&&nearestUnitDis>0)
+						if (nearestUnitDis<=DistanceDetection&&nearestUnitDis>0)
 						{
 							Instantiate(NumberTiles[nearestUnitDis - 1], currentPos, Quaternion.identity).transform.SetParent(GameManager.instance.boardScript.transform);
 						}
@@ -193,7 +194,6 @@ public class Player : MovingObject
 					nearestDistance = currentDis;
 				}
 			}
-			Debug.Log(currentDis);
 
 
 		}
@@ -239,7 +239,8 @@ public class Player : MovingObject
 		{
 			if (GameManager.instance.playerHasCase)
 			{
-				GameManager.instance.Restart();
+				//GameManager.instance.Restart();
+				GameManager.instance.InitGame();
 			}
 		}
 	}
