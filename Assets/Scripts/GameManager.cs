@@ -54,15 +54,19 @@ using System.Collections;
 		public void InitGame()
 		{
 		enemies = new List<Enemy>();
-		boardScript.SetupScene();
 		playersTurn = true;
 		playerHasKey = false;
 		playerHasCase = false;
+		Debug.Log("InitGame before setup");
+		boardScript.SetupScene();
+		Debug.Log("InitGame after setup");
+
+
 
 
 	}
 
-		public void Restart()
+	public void Restart()
 	{
 
 		SceneManager.LoadScene("Body");
@@ -74,7 +78,7 @@ using System.Collections;
 		if (!playerHasKey&&!playerHasCase)
 		{
 			if (GameObject.Find("Canvas/Objective").GetComponent<Text>().text != "Objective: Fetch the Key")
-			GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Open the case";
+			GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Fetch the Key";
 
 		}
 

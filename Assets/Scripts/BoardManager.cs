@@ -30,12 +30,22 @@ public class BoardManager : MonoBehaviour
     {
         if (GameObject.Find("Board")!=null)
         {
-            Destroy(GameObject.Find("Board"));
+            GameObject[] boardList = GameObject.FindGameObjectsWithTag("board");
+            Debug.Log("Board is not null");
+
+            foreach (var item in boardList)
+            {
+                item.SetActive(false);
+                Destroy(item);
+            }
+
+            Debug.Log("Board successfully destroyed");
             obstacles.Clear();
             hasUnits.Clear();
         }
 
         boardHolder = new GameObject("Board").transform;
+        boardHolder.tag = "board";
         for (int x = 0; x < columns-1; x++)
         {
             for (int y = 0; y < rows-1; y++)
@@ -91,6 +101,14 @@ public class BoardManager : MonoBehaviour
         UnitGenerating(itemTiles[0], ITEM_TILE);
         UnitGenerating(itemTiles[1], ITEM_TILE);
         UnitGenerating(itemTiles[2], ITEM_TILE);
+        //Instantiate(itemTiles[0], new Vector3(1, 0, 0), Quaternion.identity).transform.SetParent(boardHolder);
+        //Instantiate(itemTiles[1], new Vector3(0, 1, 0), Quaternion.identity).transform.SetParent(boardHolder);
+        //Instantiate(itemTiles[2], new Vector3(1, 1, 0), Quaternion.identity).transform.SetParent(boardHolder);
+        //hasUnits.Add(new Vector3(1, 0, 0));
+        //hasUnits.Add(new Vector3(0, 1, 0));
+        //hasUnits.Add(new Vector3(1, 1, 0));
+
+
 
 
 
@@ -113,6 +131,7 @@ public class BoardManager : MonoBehaviour
         bool unitSpawned = false;
         while (!unitSpawned)
         {
+
             Vector3 candidate = new Vector3(RandomNumber(1, columns-2), RandomNumber(1, rows-2), 0);
             if (!GridOccupied(candidate)&&PathCheck.AStarSearchPath(candidate,obstacles))
             {
