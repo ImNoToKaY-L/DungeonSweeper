@@ -19,7 +19,7 @@ public class Initgame : MonoBehaviour
 
     void OnClick()
     {
-        for (int i = 0; i < 200; i++)
+        for (int i = 0; i < 500; i++)
         {
             GameManager.instance.InitGame();
 

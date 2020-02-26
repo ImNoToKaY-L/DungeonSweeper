@@ -72,6 +72,13 @@ using System.Collections;
 		SceneManager.LoadScene("Body");
 	}
 
+	public void ProgressToNextLevel()
+	{
+
+		boardScript.NextLevel();
+		InitGame();
+	}
+
 
 	private void Update()
 	{

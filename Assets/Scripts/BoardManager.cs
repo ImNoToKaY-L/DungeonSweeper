@@ -28,6 +28,24 @@ public class BoardManager : MonoBehaviour
     private int hardLevel = 1;
     public void SetupScene()
     {
+        //if (GameObject.Find("Player")!=null)
+        //{
+        //    GameObject[] playerList = GameObject.FindGameObjectsWithTag("Player");
+        //    foreach (var item in playerList)
+        //    {
+        //        item.SetActive(false);
+        //        Destroy(item);
+        //    }
+        //}
+        Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
+        HardLevelModify();
+
+
+        //Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
+        //player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
         if (GameObject.Find("Board")!=null)
         {
             GameObject[] boardList = GameObject.FindGameObjectsWithTag("board");
@@ -55,18 +73,50 @@ public class BoardManager : MonoBehaviour
                 instance.transform.SetParent(boardHolder);
             }
         }
-
-
-        Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         RandomMapGenerating();
 
+
+        //Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
+        //player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        //RandomMapGenerating();
+
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV+"\n"
-               +"Player detection: "+player.DistanceDetection;
+               +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount;
 
 
 
     }
+
+
+    private void HardLevelModify()
+    {
+        if (hardLevel!=1)
+        {
+            rows = rows * (((hardLevel / 10) * RandomNumber(1,2)) + 1);
+            columns = columns * (((hardLevel / 10) * RandomNumber(1, 2)) + 1);
+            maxWallSpawnCount = maxWallSpawnCount * ((hardLevel / 5) + 1);
+            if (hardLevel<=3)
+            {
+                player.PlayerFOV = 2;
+                player.DistanceDetection = 15;
+            }
+            else
+            {
+                player.PlayerFOV = 1;
+                player.DistanceDetection = 10;
+            }
+
+        }
+        else
+        {
+            rows = 30;
+            columns = 30;
+            maxWallSpawnCount = 40;
+            player.PlayerFOV = 2;
+            player.DistanceDetection = 20;
+        }
+    }
+
 
 
     private int RandomNumber(int lowerbound, int upperbound)
@@ -75,12 +125,22 @@ public class BoardManager : MonoBehaviour
     }
 
 
+    public void NextLevel()
+    {
+        hardLevel++;
+    }
+
+    public void ResetLevel()
+    {
+        hardLevel = 1;
+    }
+
     private void RandomMapGenerating()
     {
         for (int i = 0; i < maxWallSpawnCount; i++)
         {
             int xORy = RandomNumber(0, 2);//0 stands for X, 1 stands for Y
-            int length = RandomNumber(1, 6);
+            int length = RandomNumber(1, Convert.ToInt32(((columns+rows)/2)*0.2));
             Vector3 startPos = new Vector3(RandomNumber(1, Convert.ToInt32(columns * 0.8) ), RandomNumber(1, Convert.ToInt32(rows*0.8)), 0f);
             for (int j = 1; j <= length; j++)
             {

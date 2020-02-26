@@ -117,12 +117,12 @@ public class PathCheck : MonoBehaviour
         Vector3 down = target - Vector3.up;
 
         //Up
-        if (up.y < GameManager.instance.boardScript.columns && !obstacle.Contains(up))
+        if (up.y < GameManager.instance.boardScript.rows && !obstacle.Contains(up))
         {
             neighbors.Add(up);
         }
         //Right
-        if (right.x < GameManager.instance.boardScript.rows && !obstacle.Contains(right))
+        if (right.x < GameManager.instance.boardScript.columns && !obstacle.Contains(right))
         {
             neighbors.Add(target + Vector3.right);
         }

@@ -240,7 +240,7 @@ public class Player : MovingObject
 			if (GameManager.instance.playerHasCase)
 			{
 				//GameManager.instance.Restart();
-				GameManager.instance.InitGame();
+				GameManager.instance.ProgressToNextLevel();
 			}
 		}
 	}
