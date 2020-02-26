@@ -37,14 +37,6 @@ public class BoardManager : MonoBehaviour
         //        Destroy(item);
         //    }
         //}
-        Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-
-        HardLevelModify();
-
-
-        //Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
-        //player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
         if (GameObject.Find("Board")!=null)
         {
@@ -62,8 +54,17 @@ public class BoardManager : MonoBehaviour
             hasUnits.Clear();
         }
 
+
+
         boardHolder = new GameObject("Board").transform;
         boardHolder.tag = "board";
+
+        Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
+        HardLevelModify();
+
+
         for (int x = 0; x < columns-1; x++)
         {
             for (int y = 0; y < rows-1; y++)
