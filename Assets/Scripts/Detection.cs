@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
-public class JumpToGame : MonoBehaviour
+public class Detection : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -17,8 +16,10 @@ public class JumpToGame : MonoBehaviour
     {
         
     }
+
     void OnClick()
     {
-        SceneManager.LoadScene("Body");
+        GameManager.instance.boardScript.player.DrawInformation();
+        GameManager.instance.playersTurn = false;
     }
 }

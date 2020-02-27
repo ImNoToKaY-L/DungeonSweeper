@@ -133,16 +133,14 @@ public class Player : MovingObject
 			//Pass in horizontal and vertical as parameters to specify the direction to move Player in.
 			GameManager.instance.playersTurn = false;
 			AttemptMove<Player>(horizontal, vertical);
-			DrawInformation();
+			//DrawInformation();
 			hasMoved = true;
 		}
-
-
 	}
 
 
 
-	private void DrawInformation()
+	public void DrawInformation()
 	{
 		GameObject[] NumbersToDestroy = GameObject.FindGameObjectsWithTag("Number");
 		foreach (var item in NumbersToDestroy)

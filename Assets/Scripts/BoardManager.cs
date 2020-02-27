@@ -15,7 +15,7 @@ public class BoardManager : MonoBehaviour
     public GameObject[] wallTiles;
     public GameObject[] itemTiles;
     public GameObject[] playerTile;
-    private Player player;
+    public Player player;
     Transform boardHolder;
 
     private const int ENEMY_TILE = 0;
@@ -93,18 +93,22 @@ public class BoardManager : MonoBehaviour
     {
         if (hardLevel!=1)
         {
-            rows = rows * (((hardLevel / 10) * RandomNumber(1,2)) + 1);
-            columns = columns * (((hardLevel / 10) * RandomNumber(1, 2)) + 1);
-            maxWallSpawnCount = maxWallSpawnCount * ((hardLevel / 5) + 1);
+
             if (hardLevel<=3)
             {
                 player.PlayerFOV = 2;
-                player.DistanceDetection = 15;
+                player.DistanceDetection = 10;
+                double dHardLevel = Convert.ToDouble(hardLevel);
+
+                double multiplier = (((dHardLevel / 10) * RandomNumber(1, 3)) + 1);
+                rows = Convert.ToInt32(rows * multiplier);
+                columns = Convert.ToInt32(columns * (((dHardLevel / 10) * RandomNumber(1, 3)) + 1));
+                maxWallSpawnCount = Convert.ToInt32(maxWallSpawnCount * ((dHardLevel / 3) + 1));
             }
             else
             {
                 player.PlayerFOV = 1;
-                player.DistanceDetection = 10;
+                player.DistanceDetection = 20;
             }
 
         }
@@ -128,7 +132,11 @@ public class BoardManager : MonoBehaviour
 
     public void NextLevel()
     {
-        hardLevel++;
+        if (hardLevel<=5)
+        {
+            hardLevel++;
+
+        }
     }
 
     public void ResetLevel()
@@ -141,8 +149,8 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < maxWallSpawnCount; i++)
         {
             int xORy = RandomNumber(0, 2);//0 stands for X, 1 stands for Y
-            int length = RandomNumber(1, Convert.ToInt32(((columns+rows)/2)*0.2));
-            Vector3 startPos = new Vector3(RandomNumber(1, Convert.ToInt32(columns * 0.8) ), RandomNumber(1, Convert.ToInt32(rows*0.8)), 0f);
+            int length = RandomNumber(1, 6+hardLevel);
+            Vector3 startPos = new Vector3(RandomNumber(1, Convert.ToInt32(columns * 0.9) ), RandomNumber(1, Convert.ToInt32(rows*0.9)), 0f);
             for (int j = 1; j <= length; j++)
             {
                 Vector3 candidate;
