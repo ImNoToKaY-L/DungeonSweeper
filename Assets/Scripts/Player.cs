@@ -13,6 +13,7 @@ public class Player : MovingObject
 	private bool hasMoved = false;
 	private List<Vector3> existingUnits;
 	private List<Vector3> obstacles;
+	private Dictionary<Vector3, GameObject> UnitMap;
 	public int PlayerFOV = 1;
 	public int DistanceDetection = 20;
 	public GameObject[] NumberTiles;
@@ -151,6 +152,7 @@ public class Player : MovingObject
 
 		existingUnits = GameManager.instance.boardScript.hasUnits;
 		obstacles = GameManager.instance.boardScript.obstacles;
+		UnitMap = GameManager.instance.boardScript.UnitMap;
 		int startPosX = Convert.ToInt32(this.transform.position.x)-PlayerFOV;
 		int startPosY = Convert.ToInt32(this.transform.position.y)-PlayerFOV;
 		int length = 2 * PlayerFOV+1;
@@ -171,6 +173,13 @@ public class Player : MovingObject
 						}
 					}
 				}
+
+				if (existingUnits.Contains(currentPos))
+				{
+					UnitMap[currentPos].SetActive(true);
+				}
+
+
 			}
 		}
 
@@ -210,8 +219,9 @@ public class Player : MovingObject
 				collision.gameObject.SetActive(false);
 				GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Escape";
 				GameManager.instance.boardScript.hasUnits.Remove(collision.transform.position);
+				GameManager.instance.boardScript.UnitMap.Remove(collision.transform.position);
 				GameManager.instance.playerHasCase = true;
-				DrawInformation();
+				//DrawInformation();
 
 			}
 		}
@@ -219,9 +229,10 @@ public class Player : MovingObject
 		{
 			collision.gameObject.SetActive(false);
 			GameManager.instance.boardScript.hasUnits.Remove(collision.transform.position);
+			GameManager.instance.boardScript.UnitMap.Remove(collision.transform.position);
 			GameManager.instance.playerHasKey = true;
 			GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Open the case";
-			DrawInformation();
+			//DrawInformation();
 		}
 
 		if (collision.tag == "Enemy")

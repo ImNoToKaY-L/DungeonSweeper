@@ -24,6 +24,7 @@ public class BoardManager : MonoBehaviour
     public List<Vector3> obstacles;
     public List<Vector3> hasUnits = new List<Vector3>();
     public int maxWallSpawnCount = 40;
+    public Dictionary<Vector3, GameObject> UnitMap = new Dictionary<Vector3, GameObject>();
 
     private int hardLevel = 1;
     public void SetupScene()
@@ -52,6 +53,7 @@ public class BoardManager : MonoBehaviour
             Debug.Log("Board successfully destroyed");
             obstacles.Clear();
             hasUnits.Clear();
+            UnitMap.Clear();
         }
 
 
@@ -149,8 +151,8 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < maxWallSpawnCount; i++)
         {
             int xORy = RandomNumber(0, 2);//0 stands for X, 1 stands for Y
-            int length = RandomNumber(1, 6+hardLevel);
-            Vector3 startPos = new Vector3(RandomNumber(1, Convert.ToInt32(columns * 0.9) ), RandomNumber(1, Convert.ToInt32(rows*0.9)), 0f);
+            int length = RandomNumber(1, 4+hardLevel);
+            Vector3 startPos = new Vector3(RandomNumber(1, Convert.ToInt32(columns * 0.8) ), RandomNumber(1, Convert.ToInt32(rows*0.8)), 0f);
             for (int j = 1; j <= length; j++)
             {
                 Vector3 candidate;
@@ -200,15 +202,18 @@ public class BoardManager : MonoBehaviour
         bool unitSpawned = false;
         while (!unitSpawned)
         {
-
+            GameObject unit;
             Vector3 candidate = new Vector3(RandomNumber(1, columns-2), RandomNumber(1, rows-2), 0);
             if (!GridOccupied(candidate)&&PathCheck.AStarSearchPath(candidate,obstacles))
             {
                 unitSpawned = true;
-                Instantiate(Tile, candidate, Quaternion.identity).transform.SetParent(boardHolder);
+                unit = Instantiate(Tile, candidate, Quaternion.identity);
+                unit.transform.SetParent(boardHolder);
                 if (tileType!=ENEMY_TILE)
                 {
                     hasUnits.Add(candidate);
+                    UnitMap.Add(candidate, unit);
+                    unit.SetActive(false);
 
                 }
             }
