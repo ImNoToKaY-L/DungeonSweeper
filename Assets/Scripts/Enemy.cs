@@ -44,13 +44,13 @@ public class Enemy : MonoBehaviour
     
     public void MoveEnemy()
     {
-        GameObject[] paintedGrid = GameObject.FindGameObjectsWithTag("Soda");
-        foreach (var item in paintedGrid)
-        {
-            item.SetActive(false);
-            Destroy(item);
+        //GameObject[] paintedGrid = GameObject.FindGameObjectsWithTag("Soda");
+        //foreach (var item in paintedGrid)
+        //{
+        //    item.SetActive(false);
+        //    Destroy(item);
             
-        }
+        //}
         AStarSearchPath();
         AttemptMove();
 
@@ -63,9 +63,27 @@ public class Enemy : MonoBehaviour
             skipMove = false;
             return;
         }
+
+        Dictionary<Vector3, GameObject> Unitmap = GameManager.instance.boardScript.UnitMap;
+
+        skipMove = true;
+
+        if (Unitmap.ContainsKey(targetGrid))
+        {
+            Vector3 alternativeTarget =-2*(targetGrid - this.transform.position);
+            Debug.Log("Multiple enemy collision triggered, target now:"+targetGrid);
+            targetGrid = targetGrid + alternativeTarget;
+            Debug.Log("Target after" + targetGrid);
+
+
+
+        }
+
+        Unitmap.Add(targetGrid,Unitmap[this.transform.position]);
+        Unitmap.Remove(this.transform.position);
+
         this.transform.position = targetGrid;
         
-        skipMove = true;
     }
     public void AStarSearchPath()
     {
@@ -101,6 +119,8 @@ public class Enemy : MonoBehaviour
 
         Vector3 backInduction = endPos;
 
+        bool isEnd = true;
+
         while (backInduction != startPos)
         {
             Vector3 next = pathSave[backInduction];
@@ -111,7 +131,13 @@ public class Enemy : MonoBehaviour
 
             else
             {
-                Instantiate(pathPainting[0], next, Quaternion.identity).transform.SetParent(Path);
+                if (isEnd)
+                {
+                    Instantiate(pathPainting[1], next, Quaternion.identity).transform.SetParent(Path);
+                    isEnd = false;
+
+                }else
+                    Instantiate(pathPainting[0], next, Quaternion.identity).transform.SetParent(Path);
 
             }
 

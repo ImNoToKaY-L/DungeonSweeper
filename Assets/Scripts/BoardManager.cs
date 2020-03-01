@@ -15,6 +15,7 @@ public class BoardManager : MonoBehaviour
     public GameObject[] wallTiles;
     public GameObject[] itemTiles;
     public GameObject[] playerTile;
+    public int EnemyNumber;
     public Player player;
     Transform boardHolder;
 
@@ -84,7 +85,7 @@ public class BoardManager : MonoBehaviour
         //RandomMapGenerating();
 
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV+"\n"
-               +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount;
+               +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount+"\n"+"Enemy count: "+EnemyNumber;
 
 
 
@@ -99,18 +100,20 @@ public class BoardManager : MonoBehaviour
             if (hardLevel<=3)
             {
                 player.PlayerFOV = 2;
-                player.DistanceDetection = 10;
+                player.DistanceDetection = 15;
                 double dHardLevel = Convert.ToDouble(hardLevel);
 
                 double multiplier = (((dHardLevel / 10) * RandomNumber(1, 3)) + 1);
                 rows = Convert.ToInt32(rows * multiplier);
                 columns = Convert.ToInt32(columns * (((dHardLevel / 10) * RandomNumber(1, 3)) + 1));
                 maxWallSpawnCount = Convert.ToInt32(maxWallSpawnCount * ((dHardLevel / 3) + 1));
+                EnemyNumber = 2;
             }
             else
             {
                 player.PlayerFOV = 1;
-                player.DistanceDetection = 20;
+                player.DistanceDetection = 25;
+                EnemyNumber = 3;
             }
 
         }
@@ -121,6 +124,7 @@ public class BoardManager : MonoBehaviour
             maxWallSpawnCount = 40;
             player.PlayerFOV = 2;
             player.DistanceDetection = 20;
+            EnemyNumber = 1;
         }
     }
 
@@ -168,16 +172,20 @@ public class BoardManager : MonoBehaviour
             }
 
         }
-        UnitGenerating(enemyTiles[0], ENEMY_TILE);
+        //UnitGenerating(enemyTiles[0], ENEMY_TILE);
+        //UnitGenerating(enemyTiles[0], ENEMY_TILE);
+
+        for (int i = 0; i < EnemyNumber; i++)
+        {
+            UnitGenerating(enemyTiles[0], ENEMY_TILE);
+
+        }
+
+
         UnitGenerating(itemTiles[0], ITEM_TILE);
         UnitGenerating(itemTiles[1], ITEM_TILE);
         UnitGenerating(itemTiles[2], ITEM_TILE);
-        //Instantiate(itemTiles[0], new Vector3(1, 0, 0), Quaternion.identity).transform.SetParent(boardHolder);
-        //Instantiate(itemTiles[1], new Vector3(0, 1, 0), Quaternion.identity).transform.SetParent(boardHolder);
-        //Instantiate(itemTiles[2], new Vector3(1, 1, 0), Quaternion.identity).transform.SetParent(boardHolder);
-        //hasUnits.Add(new Vector3(1, 0, 0));
-        //hasUnits.Add(new Vector3(0, 1, 0));
-        //hasUnits.Add(new Vector3(1, 1, 0));
+
 
 
 
@@ -215,6 +223,10 @@ public class BoardManager : MonoBehaviour
                     UnitMap.Add(candidate, unit);
                     unit.SetActive(false);
 
+                }
+                else
+                {
+                    UnitMap.Add(candidate, unit);
                 }
             }
         }

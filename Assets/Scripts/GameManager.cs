@@ -95,7 +95,22 @@ using System.Collections;
 		}
 
 		playersTurn = true;
-		enemies[0].MoveEnemy();
+
+
+		GameObject[] paintedGrid = GameObject.FindGameObjectsWithTag("Soda");
+		foreach (var item in paintedGrid)
+		{
+			item.SetActive(false);
+			Destroy(item);
+
+		}
+
+		foreach (var enemy in enemies)
+		{
+			enemy.MoveEnemy();
+		}
+
+
 	}
 
 	public void AddEnemyToList(Enemy script)
