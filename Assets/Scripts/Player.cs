@@ -11,7 +11,7 @@ public class Player : MovingObject
 #endif
 
 	private bool hasMoved = false;
-	private List<Vector3> existingUnits;
+	//private List<Vector3> existingUnits;
 	private List<Vector3> obstacles;
 	private Dictionary<Vector3, GameObject> UnitMap;
 	public int PlayerFOV = 1;
@@ -38,7 +38,7 @@ public class Player : MovingObject
 	{
 		if (target.x < 0 || target.x > GameManager.instance.boardScript.columns-2
 			||target.y<0||target.y> GameManager.instance.boardScript.rows - 2
-			||obstacles.Contains(target)||existingUnits.Contains(target))
+			||obstacles.Contains(target)||UnitMap.ContainsKey(target))
 		{
 			return false;
 		}
@@ -139,9 +139,7 @@ public class Player : MovingObject
 		}
 	}
 
-
-
-	public void DrawInformation()
+	public void ClearAllNumbers()
 	{
 		GameObject[] NumbersToDestroy = GameObject.FindGameObjectsWithTag("Number");
 		foreach (var item in NumbersToDestroy)
@@ -149,8 +147,13 @@ public class Player : MovingObject
 			item.SetActive(false);
 			Destroy(item);
 		}
+	}
 
-		existingUnits = GameManager.instance.boardScript.hasUnits;
+	public void DrawInformation()
+	{
+		ClearAllNumbers();
+
+		//existingUnits = GameManager.instance.boardScript.hasUnits;
 		obstacles = GameManager.instance.boardScript.obstacles;
 		UnitMap = GameManager.instance.boardScript.UnitMap;
 		int startPosX = Convert.ToInt32(this.transform.position.x)-PlayerFOV;
@@ -174,11 +177,10 @@ public class Player : MovingObject
 					}
 				}
 
-				if (existingUnits.Contains(currentPos))
+				if (UnitMap.ContainsKey(currentPos))
 				{
 					UnitMap[currentPos].SetActive(true);
 				}
-
 
 			}
 		}
@@ -189,7 +191,7 @@ public class Player : MovingObject
 	private int GetNearestUnitDistance(Vector3 target)
 	{
 		int nearestDistance = -1;
-		foreach (var unit in existingUnits)
+		foreach (var unit in UnitMap.Keys)
 		{
 			int currentDis = PathCheck.GetDistance(target, unit);
 			if (nearestDistance == -1) nearestDistance = currentDis;
@@ -218,7 +220,7 @@ public class Player : MovingObject
 			{
 				collision.gameObject.SetActive(false);
 				GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Escape";
-				GameManager.instance.boardScript.hasUnits.Remove(collision.transform.position);
+				//GameManager.instance.boardScript.hasUnits.Remove(collision.transform.position);
 				GameManager.instance.boardScript.UnitMap.Remove(collision.transform.position);
 				GameManager.instance.playerHasCase = true;
 				//DrawInformation();
@@ -228,7 +230,7 @@ public class Player : MovingObject
 		if (collision.tag=="Key")
 		{
 			collision.gameObject.SetActive(false);
-			GameManager.instance.boardScript.hasUnits.Remove(collision.transform.position);
+			//GameManager.instance.boardScript.hasUnits.Remove(collision.transform.position);
 			GameManager.instance.boardScript.UnitMap.Remove(collision.transform.position);
 			GameManager.instance.playerHasKey = true;
 			GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Open the case";
@@ -249,6 +251,7 @@ public class Player : MovingObject
 			if (GameManager.instance.playerHasCase)
 			{
 				//GameManager.instance.Restart();
+				ClearAllNumbers();
 				GameManager.instance.ProgressToNextLevel();
 			}
 		}

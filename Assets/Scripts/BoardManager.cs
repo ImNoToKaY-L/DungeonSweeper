@@ -22,7 +22,7 @@ public class BoardManager : MonoBehaviour
     private const int ITEM_TILE = 1;
 
     public List<Vector3> obstacles;
-    public List<Vector3> hasUnits = new List<Vector3>();
+    //public List<Vector3> hasUnits = new List<Vector3>();
     public int maxWallSpawnCount = 40;
     public Dictionary<Vector3, GameObject> UnitMap = new Dictionary<Vector3, GameObject>();
 
@@ -52,7 +52,7 @@ public class BoardManager : MonoBehaviour
 
             Debug.Log("Board successfully destroyed");
             obstacles.Clear();
-            hasUnits.Clear();
+            //hasUnits.Clear();
             UnitMap.Clear();
         }
 
@@ -194,7 +194,7 @@ public class BoardManager : MonoBehaviour
 
     private bool GridOccupied(Vector3 grid)
     {
-        return obstacles.Contains(grid) || hasUnits.Contains(grid);
+        return obstacles.Contains(grid) || UnitMap.ContainsKey(grid);
     }
 
     private void UnitGenerating(GameObject Tile,int tileType)
@@ -211,7 +211,7 @@ public class BoardManager : MonoBehaviour
                 unit.transform.SetParent(boardHolder);
                 if (tileType!=ENEMY_TILE)
                 {
-                    hasUnits.Add(candidate);
+                    //hasUnits.Add(candidate);
                     UnitMap.Add(candidate, unit);
                     unit.SetActive(false);
 
