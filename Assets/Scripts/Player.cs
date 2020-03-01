@@ -194,15 +194,19 @@ public class Player : MovingObject
 		foreach (var unit in UnitMap.Keys)
 		{
 			int currentDis = PathCheck.GetDistance(target, unit);
-			if (nearestDistance == -1) nearestDistance = currentDis;
-
-			else
+			if (UnitMap[unit].tag!="Enemy")
 			{
-				if (currentDis<nearestDistance)
+				if (nearestDistance == -1) nearestDistance = currentDis;
+
+				else
 				{
-					nearestDistance = currentDis;
+					if (currentDis < nearestDistance)
+					{
+						nearestDistance = currentDis;
+					}
 				}
 			}
+
 
 
 		}
