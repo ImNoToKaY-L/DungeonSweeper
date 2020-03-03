@@ -208,11 +208,12 @@ public class BoardManager : MonoBehaviour
     private void UnitGenerating(GameObject Tile,int tileType)
     {
         bool unitSpawned = false;
+        int NO_OUTPUT;
         while (!unitSpawned)
         {
             GameObject unit;
             Vector3 candidate = new Vector3(RandomNumber(1, columns-2), RandomNumber(1, rows-2), 0);
-            if (!GridOccupied(candidate)&&PathCheck.AStarSearchPath(candidate,obstacles))
+            if (!GridOccupied(candidate)&&PathCheck.AStarSearchPath(candidate,obstacles,out NO_OUTPUT))
             {
                 unitSpawned = true;
                 unit = Instantiate(Tile, candidate, Quaternion.identity);

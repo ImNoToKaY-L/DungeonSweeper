@@ -7,6 +7,8 @@ public class PathCheck : MonoBehaviour
 {
 
 
+    
+
 
     void Start()
     {
@@ -27,10 +29,11 @@ public class PathCheck : MonoBehaviour
     }
 
 
-    public static bool AStarSearchPath(Vector3 currentPos, List<Vector3>obstacle)
+    public static bool AStarSearchPath(Vector3 currentPos, List<Vector3>obstacle, out int Length)
     {
         Vector3 startPos;
         Vector3 endPos;
+        Length = 0;
         Dictionary<Vector3, int> search = new Dictionary<Vector3, int>();
         Dictionary<Vector3, int> cost = new Dictionary<Vector3, int>();
         Dictionary<Vector3, Vector3> pathSave = new Dictionary<Vector3, Vector3>();
@@ -75,7 +78,7 @@ public class PathCheck : MonoBehaviour
                 {
                     return true;
                 }
-
+                Length++;
 
                 backInduction = next;
             }

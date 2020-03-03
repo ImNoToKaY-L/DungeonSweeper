@@ -7,7 +7,10 @@ public class Enemy : MonoBehaviour
 {
     private Vector3 startPos;
     private Vector3 endPos;
-
+    const int CHASING = 0;
+    const int COOPERATING = 1;
+    const int INTERCEPTING = 2;
+    private int state;
     private bool initiating = true;
     private Dictionary<Vector3, int> search = new Dictionary<Vector3, int>();
     private Dictionary<Vector3, int> cost = new Dictionary<Vector3, int>();
@@ -19,7 +22,11 @@ public class Enemy : MonoBehaviour
     //The grid that this unit will go to in the next movement
     private Vector3 targetGrid;
     bool skipMove = true;
-
+    bool playerSpotted = false;
+    Vector3 playerPreviousPos;
+    Vector3 playerCurrentPos;
+    Vector3 playerOffset;
+    Transform player;
 
     void Start()
     {
@@ -30,16 +37,29 @@ public class Enemy : MonoBehaviour
             Path = new GameObject("PathPainting").transform;
             initiating = false;
             startPos = this.transform.position;
-            endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+            //endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
             obstacle = GameManager.instance.boardScript.obstacles;
             GameManager.instance.AddEnemyToList(this);
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+            state = CHASING;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+
+    void StateJudging()
+    {
+
+        Vector3 currentPos = this.transform.position;
+        Vector3 playerPos = GameManager.instance.boardScript.player.transform.position;
+        Vector3 nearestItemPos;
+
+
     }
     
     public void MoveEnemy()
@@ -49,10 +69,50 @@ public class Enemy : MonoBehaviour
         //{
         //    item.SetActive(false);
         //    Destroy(item);
-            
+
         //}
-        AStarSearchPath();
-        AttemptMove();
+
+        startPos = this.transform.position;
+        //Currently use the player as the target
+
+
+
+        if (PathCheck.GetDistance(this.transform.position,player.position)<=50)
+        {
+
+            playerSpotted = true;
+            playerPreviousPos = GameManager.instance.boardScript.player.transform.position;
+        }
+
+        if (playerSpotted)
+        {
+            switch (state)
+            {
+                case CHASING:
+                    endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+                    break;
+                case INTERCEPTING:
+                    break;
+                case COOPERATING:
+                    //if (playerOffset == Vector3.zero)
+                    //    state = CHASING;
+                    //else
+                    //{
+                        endPos = playerCurrentPos + 2*playerOffset;
+                    Debug.Log("Now cooperating:"+endPos);
+                    //}
+
+                    break;
+            }
+
+
+            AStarSearchPath();
+            AttemptMove();
+        }
+
+
+        
+
 
     }
 
@@ -65,7 +125,7 @@ public class Enemy : MonoBehaviour
         }
 
         Dictionary<Vector3, GameObject> Unitmap = GameManager.instance.boardScript.UnitMap;
-
+        playerCurrentPos = GameManager.instance.boardScript.player.transform.position;
         skipMove = true;
 
         if (Unitmap.ContainsKey(targetGrid))
@@ -73,24 +133,26 @@ public class Enemy : MonoBehaviour
             Vector3 alternativeTarget =-2*(targetGrid - this.transform.position);
             Debug.Log("Multiple enemy collision triggered, target now:"+targetGrid);
             targetGrid = targetGrid + alternativeTarget;
-            Debug.Log("Target after" + targetGrid);
-
-
+            state = CHASING;
 
         }
 
         Unitmap.Add(targetGrid,Unitmap[this.transform.position]);
         Unitmap.Remove(this.transform.position);
 
-        this.transform.position = targetGrid;
+        //if(!obstacle.Contains(targetGrid))
+            this.transform.position = targetGrid;
+        playerOffset = playerCurrentPos - playerPreviousPos;
+        Debug.Log("Offset: " + playerOffset);
+        playerPreviousPos = playerCurrentPos;
         
     }
     public void AStarSearchPath()
     {
         
-        startPos = this.transform.position;
-        //Currently use the player as the target
-        endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+        //startPos = this.transform.position;
+        ////Currently use the player as the target
+        //endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
         search.Add(startPos, GetDistance(startPos, endPos));
         cost.Add(startPos, 0);
         hadSearch.Add(startPos);
