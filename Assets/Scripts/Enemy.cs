@@ -99,6 +99,10 @@ public class Enemy : MonoBehaviour
                     //else
                     //{
                         endPos = playerCurrentPos + 2*playerOffset;
+                    if (GetDistance(this.transform.position,player.position)<=3)
+                    {
+                        state = CHASING;
+                    }
                     if (!ValidGrid(endPos))
                     {
                         Vector3 newTarget = new Vector3(0,0,-1);
@@ -118,7 +122,7 @@ public class Enemy : MonoBehaviour
 
                         if (newTarget.z == -1)
                         {
-                            endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+                            endPos = this.transform.position;
 
                         }
                         else
@@ -176,10 +180,14 @@ public class Enemy : MonoBehaviour
 
         if (Unitmap.ContainsKey(targetGrid))
         {
-            Vector3 alternativeTarget =-2*(targetGrid - this.transform.position);
-            Debug.Log("Multiple enemy collision triggered, target now:"+targetGrid);
-            targetGrid = targetGrid + alternativeTarget;
+            //Vector3 alternativeTarget =-2*(targetGrid - this.transform.position);
+            Debug.Log("Multiple enemy collision triggered, target now");
+            targetGrid = this.transform.position;
             state = COOPERATING;
+            playerOffset = playerCurrentPos - playerPreviousPos;
+            playerPreviousPos = playerCurrentPos;
+
+            return;
 
         }
 
