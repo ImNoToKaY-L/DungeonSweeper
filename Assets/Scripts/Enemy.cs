@@ -77,7 +77,7 @@ public class Enemy : MonoBehaviour
 
 
 
-        if (PathCheck.GetDistance(this.transform.position,player.position)<=50)
+        if (PathCheck.GetDistance(this.transform.position,player.position)<=50&&!playerSpotted)
         {
 
             playerSpotted = true;
@@ -99,7 +99,36 @@ public class Enemy : MonoBehaviour
                     //else
                     //{
                         endPos = playerCurrentPos + 2*playerOffset;
-                    Debug.Log("Now cooperating:"+endPos);
+                    if (!ValidGrid(endPos))
+                    {
+                        Vector3 newTarget = new Vector3(0,0,-1);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            for (int j = 0; j < 2; j++)
+                            {
+                                Vector3 alternativeTarget = endPos + new Vector3(i, j, 0);
+
+                                if (ValidGrid(alternativeTarget))
+                                {
+                                    newTarget = alternativeTarget;
+                                    
+                                }
+                            }
+                        }
+
+                        if (newTarget.z == -1)
+                        {
+                            endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+
+                        }
+                        else
+                            endPos = newTarget;
+
+                    }
+
+
+                    Debug.Log("Now cooperating:"+playerOffset);
+
                     //}
 
                     break;
@@ -116,6 +145,22 @@ public class Enemy : MonoBehaviour
 
     }
 
+    private bool ValidGrid(Vector3 target)
+    {
+        if (target.x < 0 || target.x > GameManager.instance.boardScript.columns - 2
+            || target.y < 0 || target.y > GameManager.instance.boardScript.rows - 2
+            || obstacle.Contains(target) || GameManager.instance.boardScript.UnitMap.ContainsKey(target))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+
+
     void AttemptMove()
     {
         if (skipMove)
@@ -126,6 +171,7 @@ public class Enemy : MonoBehaviour
 
         Dictionary<Vector3, GameObject> Unitmap = GameManager.instance.boardScript.UnitMap;
         playerCurrentPos = GameManager.instance.boardScript.player.transform.position;
+
         skipMove = true;
 
         if (Unitmap.ContainsKey(targetGrid))
@@ -133,7 +179,7 @@ public class Enemy : MonoBehaviour
             Vector3 alternativeTarget =-2*(targetGrid - this.transform.position);
             Debug.Log("Multiple enemy collision triggered, target now:"+targetGrid);
             targetGrid = targetGrid + alternativeTarget;
-            state = CHASING;
+            state = COOPERATING;
 
         }
 
@@ -143,7 +189,7 @@ public class Enemy : MonoBehaviour
         //if(!obstacle.Contains(targetGrid))
             this.transform.position = targetGrid;
         playerOffset = playerCurrentPos - playerPreviousPos;
-        Debug.Log("Offset: " + playerOffset);
+        Debug.Log("Offset " + playerOffset);
         playerPreviousPos = playerCurrentPos;
         
     }
