@@ -27,6 +27,10 @@ public class Enemy : MonoBehaviour
     Vector3 playerCurrentPos;
     Vector3 playerOffset;
     Transform player;
+    Vector3 playerPreEndpos;
+    Dictionary<Vector3, GameObject> Unitmap;
+
+
 
     void Start()
     {
@@ -42,6 +46,7 @@ public class Enemy : MonoBehaviour
             GameManager.instance.AddEnemyToList(this);
             player = GameObject.FindGameObjectWithTag("Player").transform;
             state = CHASING;
+            Unitmap =  GameManager.instance.boardScript.UnitMap;
         }
     }
 
@@ -92,35 +97,80 @@ public class Enemy : MonoBehaviour
                     endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
                     break;
                 case INTERCEPTING:
+                    endPos = playerPreEndpos;
+                    if (GetDistance(this.transform.position,player.position)>=20||
+                        GetDistance(this.transform.position, player.position)<=3)
+                    {
+                        state = CHASING;
+                        GameManager.instance.enemyIntercepting = false;
+                        GameManager.instance.enemyCooperating = false;
+                        Debug.Log("STOP intercepting");
+                    }
+
+
                     break;
                 case COOPERATING:
                     //if (playerOffset == Vector3.zero)
                     //    state = CHASING;
                     //else
                     //{
-                        endPos = playerCurrentPos + 2*playerOffset;
+
+                    GameObject[] paintedGrid = GameObject.FindGameObjectsWithTag("Candidate");
+                    foreach (var item in paintedGrid)
+                    {
+                        Destroy(item);
+                    }
+
+
+                    endPos = playerCurrentPos + 2*playerOffset;
                     if (GetDistance(this.transform.position,player.position)<=3)
                     {
                         state = CHASING;
+                        GameManager.instance.enemyCooperating = false;
                     }
-                    if (!ValidGrid(endPos))
-                    {
-                        Vector3 newTarget = new Vector3(0,0,-1);
-                        for (int i = 0; i < 2; i++)
+                    //if (!ValidGrid(endPos))
+                    //{
+                        Vector3 newTarget = new Vector3(0,0,-5);
+                        Unitmap = GameManager.instance.boardScript.UnitMap;
+
+
+                        for (int i = -1; i < 2; i++)
                         {
-                            for (int j = 0; j < 2; j++)
+                            for (int j = -1; j < 2; j++)
                             {
                                 Vector3 alternativeTarget = endPos + new Vector3(i, j, 0);
+                                Instantiate(pathPainting[2], alternativeTarget, Quaternion.identity).transform.SetParent(Path);
+
 
                                 if (ValidGrid(alternativeTarget))
                                 {
                                     newTarget = alternativeTarget;
                                     
                                 }
+
+
+                                if (Unitmap.ContainsKey(alternativeTarget))
+                                {
+                                    Debug.Log("INTERCEPTING TEST"+Unitmap[alternativeTarget]);
+                                }
+
+
+
+                                if (Unitmap.ContainsKey(alternativeTarget)&&(Unitmap[alternativeTarget].tag=="Key"||
+                                    Unitmap[alternativeTarget].tag == "Case"|| Unitmap[alternativeTarget].tag == "Exit")
+                                    &&!GameManager.instance.enemyIntercepting)
+                                {
+                                    state = INTERCEPTING;
+                                    GameManager.instance.enemyIntercepting = true;
+                                    playerPreEndpos = alternativeTarget;
+                                    Debug.Log("Intercepting triggered");
+                                    return;
+                                }
+
                             }
                         }
 
-                        if (newTarget.z == -1)
+                        if (newTarget.z == -5)
                         {
                             endPos = this.transform.position;
 
@@ -128,7 +178,14 @@ public class Enemy : MonoBehaviour
                         else
                             endPos = newTarget;
 
-                    }
+                        if (playerOffset==Vector3.zero)
+                        {
+                            endPos = playerPreEndpos;
+                        }
+
+                        playerPreEndpos = endPos;
+
+                    //}
 
 
                     Debug.Log("Now cooperating:"+playerOffset);
@@ -138,6 +195,19 @@ public class Enemy : MonoBehaviour
                     break;
             }
 
+            if (Unitmap.ContainsKey(endPos))
+            {
+                Debug.Log("Player sit on item, rotating");
+                Vector3 rotatePos = GenerateCandidatePos(3,3);
+                if (rotatePos.x!=-1)
+                {
+                    endPos = rotatePos;
+                }
+                else
+                {
+                    endPos = GenerateCandidatePos(5, 5);
+                }
+            }
 
             AStarSearchPath();
             AttemptMove();
@@ -147,6 +217,23 @@ public class Enemy : MonoBehaviour
         
 
 
+    }
+
+
+    private Vector3 GenerateCandidatePos(int column, int row)
+    {
+        for (int i = 0; i < column; i++)
+        {
+            for (int j = 0; j < row; j++)
+            {
+                Vector3 candidatePos = endPos+ new Vector3(i, j, 0);
+                if (!(Unitmap.ContainsKey(candidatePos) || obstacle.Contains(candidatePos))&&ValidGrid(candidatePos))
+                {
+                    return candidatePos;
+                }
+            }
+        }
+        return new Vector3(-1, -1, 0);
     }
 
     private bool ValidGrid(Vector3 target)
@@ -173,15 +260,16 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        Dictionary<Vector3, GameObject> Unitmap = GameManager.instance.boardScript.UnitMap;
+        //Dictionary<Vector3, GameObject> Unitmap = GameManager.instance.boardScript.UnitMap;
         playerCurrentPos = GameManager.instance.boardScript.player.transform.position;
 
         skipMove = true;
 
-        if (Unitmap.ContainsKey(targetGrid))
+        if (GameManager.instance.enemyCount!=1&&!GameManager.instance.enemyCooperating&&GetDistance(playerCurrentPos,startPos)>=15)
         {
             //Vector3 alternativeTarget =-2*(targetGrid - this.transform.position);
-            Debug.Log("Multiple enemy collision triggered, target now");
+            Debug.Log("Cooperating");
+            GameManager.instance.enemyCooperating = true;
             targetGrid = this.transform.position;
             state = COOPERATING;
             playerOffset = playerCurrentPos - playerPreviousPos;
@@ -190,6 +278,8 @@ public class Enemy : MonoBehaviour
             return;
 
         }
+
+
 
         Unitmap.Add(targetGrid,Unitmap[this.transform.position]);
         Unitmap.Remove(this.transform.position);
@@ -263,7 +353,6 @@ public class Enemy : MonoBehaviour
         pathSave.Clear();
         hadSearch.Clear();
 
-
     }
     private Vector3 GetShortestPos()
     {
@@ -291,22 +380,22 @@ public class Enemy : MonoBehaviour
         Vector3 down = target - Vector3.up;
 
         //Up
-        if (up.y < GameManager.instance.boardScript.rows && !obstacle.Contains(up))
+        if (up.y < GameManager.instance.boardScript.rows && !obstacle.Contains(up)&&!Unitmap.ContainsKey(up))
         {
             neighbors.Add(up);
         }
         //Right
-        if (right.x < GameManager.instance.boardScript.columns && !obstacle.Contains(right))
+        if (right.x < GameManager.instance.boardScript.columns && !obstacle.Contains(right) && !Unitmap.ContainsKey(right))
         {
             neighbors.Add(target + Vector3.right);
         }
         //Left
-        if (left.x >= 0 && !obstacle.Contains(left))
+        if (left.x >= 0 && !obstacle.Contains(left) && !Unitmap.ContainsKey(left))
         {
             neighbors.Add(target - Vector3.right);
         }
         //Down
-        if (down.y >= 0 && !obstacle.Contains(down))
+        if (down.y >= 0 && !obstacle.Contains(down) && !Unitmap.ContainsKey(down))
         {
             neighbors.Add(target - Vector3.up);
         }
@@ -318,7 +407,6 @@ public class Enemy : MonoBehaviour
     {
         return Convert.ToInt32(Mathf.Abs(posA.x - posB.x) + Mathf.Abs(posA.y - posB.y));
     }
-
 
 
 }
