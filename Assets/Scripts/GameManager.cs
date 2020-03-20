@@ -64,11 +64,13 @@ using System.Collections;
 		boardScript.SetupScene();
 		Debug.Log("InitGame after setup");
 		enemyCount = enemies.ToArray().Length;
+		enemyIntercepting = false;
+		enemyCooperating = false;
 
 
 
 
-	}
+}
 
 	public void Restart()
 	{
