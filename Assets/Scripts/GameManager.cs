@@ -16,7 +16,6 @@ using System.Collections;
 		public List<Enemy> enemies;
 		public bool enemyIntercepting = false;
 		public bool enemyCooperating = false;
-		public int enemyCount = 0;
 		
 		
 		//Awake is always called before any Start functions
@@ -60,10 +59,8 @@ using System.Collections;
 		playersTurn = true;
 		playerHasKey = false;
 		playerHasCase = false;
-		Debug.Log("InitGame before setup");
 		boardScript.SetupScene();
-		Debug.Log("InitGame after setup");
-		enemyCount = enemies.ToArray().Length;
+		Debug.Log("Enemies: " + boardScript.EnemyNumber);
 		enemyIntercepting = false;
 		enemyCooperating = false;
 

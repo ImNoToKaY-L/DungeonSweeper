@@ -265,7 +265,7 @@ public class Enemy : MonoBehaviour
 
         skipMove = true;
 
-        if (GameManager.instance.enemyCount!=1&&!GameManager.instance.enemyCooperating&&GetDistance(playerCurrentPos,startPos)>=15)
+        if (GameManager.instance.boardScript.EnemyNumber!=1&&!GameManager.instance.enemyCooperating&&GetDistance(playerCurrentPos,startPos)>=15)
         {
             //Vector3 alternativeTarget =-2*(targetGrid - this.transform.position);
             Debug.Log("Cooperating");
