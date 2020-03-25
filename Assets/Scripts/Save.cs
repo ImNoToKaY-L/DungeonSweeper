@@ -46,16 +46,25 @@ public class Save
     {
         BinaryFormatter bf = new BinaryFormatter();
         String path = Application.dataPath + "/Scripts" + "/SavedBoard.txt";
+#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        path = Application.persistentDataPath+  "/SavedBoard.txt";
+#endif
+
+
+
         FileStream fs = File.Create(path);
         bf.Serialize(fs, this);
         fs.Close();
-        AssetDatabase.Refresh();
+        //AssetDatabase.Refresh();
 
     }
 
     public Save LoadBoard()
     {
         String path = Application.dataPath + "/Scripts" + "/SavedBoard.txt";
+#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        path = Application.persistentDataPath + "/SavedBoard.txt";
+#endif
         if (File.Exists(path))
         {
             BinaryFormatter bf = new BinaryFormatter();
@@ -63,7 +72,7 @@ public class Save
             Save savedBoard = bf.Deserialize(fs) as Save;
             fs.Close();
             File.Delete(path);
-            AssetDatabase.Refresh();
+            //AssetDatabase.Refresh();
 
             return savedBoard;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.IO;
 using UnityEngine.UI;
 
 
@@ -72,6 +73,17 @@ public class BoardManager : MonoBehaviour
 
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV+"\n"
                +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount+"\n"+"Enemy count: "+EnemyNumber;
+
+        String path = Application.dataPath + "/Scripts" + "/SavedBoard.txt";
+#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        path = Application.persistentDataPath + "/SavedBoard.txt";
+#endif
+
+
+        if (File.Exists(path))
+        {
+            GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text += "\n" + "SAVED FILE";
+        }
 
 
     }

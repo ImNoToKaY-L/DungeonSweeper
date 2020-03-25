@@ -21,7 +21,12 @@ public class JumpToUI : MonoBehaviour
     }
     void OnClick()
     {
+
         String path = Application.dataPath + "/Scripts" + "/SavedBoard.txt";
+
+#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        path = Application.persistentDataPath + "/SavedBoard.txt";
+#endif
         if (File.Exists(path))
         {
             Save save = new Save().LoadBoard();
