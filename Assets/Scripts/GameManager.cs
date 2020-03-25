@@ -39,20 +39,15 @@ using System.Collections;
 		}
 		
 
-		//Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
-			//Get a component reference to the attached BoardManager script
 			boardScript = GetComponent<BoardManager>();
 			
 			//Call the InitGame function to initialize the first level 
 			InitGame();
 		}
 
-        //this is called only once, and the paramter tell it to be called only after the scene was loaded
-        //(otherwise, our Scene Load callback would be called the very first load, and we don't want that)
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 
 		
-		//Initializes the game for each level.
 		public void InitGame()
 		{
 		enemies = new List<Enemy>();

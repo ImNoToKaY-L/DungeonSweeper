@@ -18,27 +18,18 @@ public class BoardManager : MonoBehaviour
     public int EnemyNumber;
     public Player player;
     Transform boardHolder;
-
+    public bool isAsave = false;
     private const int ENEMY_TILE = 0;
     private const int ITEM_TILE = 1;
 
     public List<Vector3> obstacles;
-    //public List<Vector3> hasUnits = new List<Vector3>();
     public int maxWallSpawnCount = 40;
     public Dictionary<Vector3, GameObject> UnitMap = new Dictionary<Vector3, GameObject>();
 
     private int hardLevel = 1;
     public void SetupScene()
     {
-        //if (GameObject.Find("Player")!=null)
-        //{
-        //    GameObject[] playerList = GameObject.FindGameObjectsWithTag("Player");
-        //    foreach (var item in playerList)
-        //    {
-        //        item.SetActive(false);
-        //        Destroy(item);
-        //    }
-        //}
+
 
         if (GameObject.Find("Board")!=null)
         {
@@ -53,7 +44,6 @@ public class BoardManager : MonoBehaviour
 
             Debug.Log("Board successfully destroyed");
             obstacles.Clear();
-            //hasUnits.Clear();
             UnitMap.Clear();
         }
 
@@ -80,13 +70,8 @@ public class BoardManager : MonoBehaviour
         RandomMapGenerating();
 
 
-        //Instantiate(playerTile[0], new Vector3(0, 0, 0f), Quaternion.identity).transform.SetParent(boardHolder);
-        //player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        //RandomMapGenerating();
-
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV+"\n"
                +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount+"\n"+"Enemy count: "+EnemyNumber;
-
 
 
     }
@@ -232,6 +217,11 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
+
+
+
+
+
 }
 
 
