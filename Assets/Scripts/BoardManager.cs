@@ -27,27 +27,27 @@ public class BoardManager : MonoBehaviour
     public int maxWallSpawnCount = 40;
     public Dictionary<Vector3, GameObject> UnitMap = new Dictionary<Vector3, GameObject>();
 
-    private int hardLevel = 1;
-    public void SetupScene()
+    public int hardLevel = 1;
+    public void SetupScene(bool isSave)
     {
 
 
-        if (GameObject.Find("Board")!=null)
-        {
-            GameObject[] boardList = GameObject.FindGameObjectsWithTag("board");
-            Debug.Log("Board is not null");
+        //if (GameObject.Find("Board")!=null)
+        //{
+        //    GameObject[] boardList = GameObject.FindGameObjectsWithTag("board");
+        //    Debug.Log("Board is not null");
 
-            foreach (var item in boardList)
-            {
-                item.SetActive(false);
-                Destroy(item);
-            }
+        //    foreach (var item in boardList)
+        //    {
+        //        item.SetActive(false);
+        //        Destroy(item);
+        //    }
 
-            Debug.Log("Board successfully destroyed");
-            obstacles.Clear();
-            UnitMap.Clear();
-        }
-
+        //    Debug.Log("Board successfully destroyed");
+        //    obstacles.Clear();
+        //    UnitMap.Clear();
+        //}
+        DestroyBoardIfExist();
 
 
         boardHolder = new GameObject("Board").transform;
@@ -59,15 +59,16 @@ public class BoardManager : MonoBehaviour
         HardLevelModify();
 
 
-        for (int x = 0; x < columns-1; x++)
-        {
-            for (int y = 0; y < rows-1; y++)
-            {
-                GameObject toInstantiate = floorTiles[0];
-                GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
-                instance.transform.SetParent(boardHolder);
-            }
-        }
+        //for (int x = 0; x < columns-1; x++)
+        //{
+        //    for (int y = 0; y < rows-1; y++)
+        //    {
+        //        GameObject toInstantiate = floorTiles[0];
+        //        GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
+        //        instance.transform.SetParent(boardHolder);
+        //    }
+        //}
+        FloorGenerating();
         RandomMapGenerating();
 
 
@@ -86,6 +87,96 @@ public class BoardManager : MonoBehaviour
         }
 
 
+    }
+
+    public void SetupSceneFromSave(Save save)
+    {
+        DestroyBoardIfExist();
+        boardHolder = new GameObject("Board").transform;
+        boardHolder.tag = "board";
+
+
+
+        Instantiate(playerTile[0], save.playerPos.toVector3(), Quaternion.identity).transform.SetParent(boardHolder);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player.PlayerFOV = save.playerFOV;
+        player.DistanceDetection = save.playerDistanceDetection;
+        rows = save.rows;
+        columns = save.columns;
+        EnemyNumber = save.EnemyNumber;
+        maxWallSpawnCount = save.maxWallSpawnCount;
+        hardLevel = save.hardLevel;
+
+        FloorGenerating();
+
+        foreach (var item in save.obstacles)
+        {
+            Vector3 obstaclePos = item.toVector3();
+            Instantiate(floorTiles[0], obstaclePos, Quaternion.identity).transform.SetParent(boardHolder);
+            obstacles.Add(obstaclePos);
+        }
+        foreach (var item in save.unitVector)
+        {
+            Vector3 unitPos = item.toVector3();
+            GameObject tile = FromTagToTile(item.unitTag);
+            GameObject unit = Instantiate(tile, unitPos, Quaternion.identity);
+            unit.transform.SetParent(boardHolder);
+            UnitMap.Add(unitPos, unit);
+
+        }
+
+        GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV + "\n"
+       + "Player detection: " + player.DistanceDetection + "\n" + "Max wall spawn: " + maxWallSpawnCount + "\n" + "Enemy count: " + EnemyNumber;
+    }
+
+
+    private void FloorGenerating()
+    {
+        for (int x = 0; x < columns - 1; x++)
+        {
+            for (int y = 0; y < rows - 1; y++)
+            {
+                GameObject toInstantiate = floorTiles[0];
+                GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
+                instance.transform.SetParent(boardHolder);
+            }
+        }
+    }
+
+
+    private GameObject FromTagToTile(String tag)
+    {
+        switch (tag)
+        {
+            case "Key":
+                return itemTiles[1];
+            case "Exit":
+                return itemTiles[0];
+            case "Case":
+                return itemTiles[2];
+            case "Enemy":
+                return enemyTiles[0];
+        }
+        return null;
+    }
+
+    private void DestroyBoardIfExist()
+    {
+        if (GameObject.Find("Board") != null)
+        {
+            GameObject[] boardList = GameObject.FindGameObjectsWithTag("board");
+            Debug.Log("Board is not null");
+
+            foreach (var item in boardList)
+            {
+                item.SetActive(false);
+                Destroy(item);
+            }
+
+            Debug.Log("Board successfully destroyed");
+            obstacles.Clear();
+            UnitMap.Clear();
+        }
     }
 
 

@@ -54,7 +54,7 @@ using System.Collections;
 		playersTurn = true;
 		playerHasKey = false;
 		playerHasCase = false;
-		boardScript.SetupScene();
+		boardScript.SetupScene(false);
 		Debug.Log("Enemies: " + boardScript.EnemyNumber);
 		enemyIntercepting = false;
 		enemyCooperating = false;

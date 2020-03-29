@@ -10,19 +10,45 @@ public class Save
 {
     [NonSerialized]
     private BoardManager board = GameManager.instance.boardScript;
+    [NonSerialized]
+    public static String SavePath = Application.persistentDataPath + "/SavedBoard.txt";
+    [NonSerialized]
+    Player player = GameManager.instance.boardScript.player;
+    [NonSerialized]
+    public static bool LoadGame = false;
+
 
     public int rows, columns, EnemyNumber, maxWallSpawnCount,hardLevel;
-    public List<Vector3S> unitVector = new List<Vector3S>();
+    public List<UnitPair> unitVector = new List<UnitPair>();
+    public List<Vector3S> obstacles = new List<Vector3S>();
+    public bool playerHasKey, playerHasCase;
+    public Vector3S playerPos;
+    public int playerFOV, playerDistanceDetection;
 
     public Save()
     {
         rows = board.rows;
         columns = board.columns;
-        foreach (var item in GameManager.instance.boardScript.UnitMap)
+        foreach (var item in board.UnitMap)
         {
-            Vector3S vector = new Vector3S(item.Key);
-            unitVector.Add(vector);
+            unitVector.Add(new UnitPair(item.Key, item.Value));
         }
+        foreach (var item in board.obstacles)
+        {
+            Vector3S vector = new Vector3S(item);
+            obstacles.Add(vector);
+        }
+        playerHasKey = GameManager.instance.playerHasKey;
+        playerHasCase = GameManager.instance.playerHasCase;
+
+        playerFOV = player.PlayerFOV;
+        playerDistanceDetection = player.DistanceDetection;
+        playerPos = new Vector3S(GameObject.FindGameObjectWithTag("Player").transform.position);
+
+        EnemyNumber = board.EnemyNumber;
+        maxWallSpawnCount = board.maxWallSpawnCount;
+        hardLevel = board.hardLevel;
+
     }
 
     [Serializable]
@@ -38,6 +64,30 @@ public class Save
             x = vector.x;
             y = vector.y;
             z = vector.z;
+        }
+        public Vector3 toVector3()
+        {
+            return new Vector3(x, y, z);
+        }
+    }
+
+    [Serializable]
+    public class UnitPair
+    {
+        public float x;
+        public float y;
+        public float z;
+        public String unitTag;
+         public UnitPair(Vector3 pos,GameObject unit)
+        {
+            x = pos.x;
+            y = pos.y;
+            z = pos.z;
+            unitTag = unit.tag;
+        }
+        public Vector3 toVector3()
+        {
+            return new Vector3(x, y, z);
         }
     }
 
@@ -72,7 +122,6 @@ public class Save
             Save savedBoard = bf.Deserialize(fs) as Save;
             fs.Close();
             File.Delete(path);
-            //AssetDatabase.Refresh();
 
             return savedBoard;
         }
