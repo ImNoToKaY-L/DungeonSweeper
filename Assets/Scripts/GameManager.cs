@@ -16,6 +16,7 @@ using System.Collections;
 		public List<Enemy> enemies;
 		public bool enemyIntercepting = false;
 		public bool enemyCooperating = false;
+		public bool KeyFound, CaseFound, ExitFound;
 		
 		
 		//Awake is always called before any Start functions
@@ -54,10 +55,16 @@ using System.Collections;
 		playersTurn = true;
 		playerHasKey = false;
 		playerHasCase = false;
-		boardScript.SetupScene(false);
+		if (!Save.LoadGame)
+			boardScript.SetupScene();
+		else
+			boardScript.SetupSceneFromSave(new Save(false).LoadBoard());
 		Debug.Log("Enemies: " + boardScript.EnemyNumber);
 		enemyIntercepting = false;
 		enemyCooperating = false;
+		KeyFound = false;
+		CaseFound = false;
+		ExitFound = false;
 
 
 

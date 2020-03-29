@@ -19,7 +19,6 @@ public class BoardManager : MonoBehaviour
     public int EnemyNumber;
     public Player player;
     Transform boardHolder;
-    public bool isAsave = false;
     private const int ENEMY_TILE = 0;
     private const int ITEM_TILE = 1;
 
@@ -28,7 +27,7 @@ public class BoardManager : MonoBehaviour
     public Dictionary<Vector3, GameObject> UnitMap = new Dictionary<Vector3, GameObject>();
 
     public int hardLevel = 1;
-    public void SetupScene(bool isSave)
+    public void SetupScene()
     {
 
 
@@ -97,22 +96,24 @@ public class BoardManager : MonoBehaviour
 
 
 
-        Instantiate(playerTile[0], save.playerPos.toVector3(), Quaternion.identity).transform.SetParent(boardHolder);
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        player.PlayerFOV = save.playerFOV;
-        player.DistanceDetection = save.playerDistanceDetection;
+
         rows = save.rows;
         columns = save.columns;
         EnemyNumber = save.EnemyNumber;
         maxWallSpawnCount = save.maxWallSpawnCount;
         hardLevel = save.hardLevel;
+        GameManager.instance.playerHasCase = save.playerHasCase;
+        GameManager.instance.playerHasKey = save.playerHasKey;
+        GameManager.instance.KeyFound = save.KeyFound;
+        GameManager.instance.CaseFound = save.CaseFound;
+        GameManager.instance.ExitFound = save.ExitFound;
 
         FloorGenerating();
 
         foreach (var item in save.obstacles)
         {
             Vector3 obstaclePos = item.toVector3();
-            Instantiate(floorTiles[0], obstaclePos, Quaternion.identity).transform.SetParent(boardHolder);
+            Instantiate(wallTiles[0], obstaclePos, Quaternion.identity).transform.SetParent(boardHolder);
             obstacles.Add(obstaclePos);
         }
         foreach (var item in save.unitVector)
@@ -122,8 +123,27 @@ public class BoardManager : MonoBehaviour
             GameObject unit = Instantiate(tile, unitPos, Quaternion.identity);
             unit.transform.SetParent(boardHolder);
             UnitMap.Add(unitPos, unit);
+            Debug.Log("Unit added "+unitPos);
+
+            switch (item.unitTag)
+            {
+                case "Key":
+                    if (!save.KeyFound) unit.SetActive(false);
+                    break;
+                case "Case":
+                    if (!save.CaseFound) unit.SetActive(false);
+                    break;
+                case "Exit":
+                    if (!save.ExitFound) unit.SetActive(false);
+                    break;
+            }
 
         }
+
+        Instantiate(playerTile[0], save.playerPos.toVector3(), Quaternion.identity).transform.SetParent(boardHolder);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player.PlayerFOV = save.playerFOV;
+        player.DistanceDetection = save.playerDistanceDetection;
 
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV + "\n"
        + "Player detection: " + player.DistanceDetection + "\n" + "Max wall spawn: " + maxWallSpawnCount + "\n" + "Enemy count: " + EnemyNumber;

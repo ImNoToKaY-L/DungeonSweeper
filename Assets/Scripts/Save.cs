@@ -24,6 +24,8 @@ public class Save
     public bool playerHasKey, playerHasCase;
     public Vector3S playerPos;
     public int playerFOV, playerDistanceDetection;
+    public bool KeyFound, CaseFound, ExitFound;
+
 
     public Save()
     {
@@ -48,6 +50,14 @@ public class Save
         EnemyNumber = board.EnemyNumber;
         maxWallSpawnCount = board.maxWallSpawnCount;
         hardLevel = board.hardLevel;
+        KeyFound = GameManager.instance.KeyFound;
+        CaseFound = GameManager.instance.CaseFound;
+        ExitFound = GameManager.instance.ExitFound;
+
+
+    }
+    public Save(bool NO)
+    {
 
     }
 
@@ -100,11 +110,11 @@ public class Save
         path = Application.persistentDataPath+  "/SavedBoard.txt";
 #endif
 
-
-
         FileStream fs = File.Create(path);
         bf.Serialize(fs, this);
         fs.Close();
+        Debug.Log("Board saved successfully to " + SavePath);
+
         //AssetDatabase.Refresh();
 
     }
@@ -122,6 +132,7 @@ public class Save
             Save savedBoard = bf.Deserialize(fs) as Save;
             fs.Close();
             File.Delete(path);
+            Save.LoadGame = false;
 
             return savedBoard;
         }

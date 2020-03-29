@@ -96,6 +96,24 @@ public class Player : MovingObject
 				if (UnitMap.ContainsKey(currentPos))
 				{
 					UnitMap[currentPos].SetActive(true);
+
+					switch (UnitMap[currentPos].tag)
+					{
+						case "Key":
+							GameManager.instance.KeyFound = true;
+							Debug.Log("Key has been found");
+							break;
+						case "Case":
+							GameManager.instance.CaseFound = true;
+							Debug.Log("Case has been found");
+
+							break;
+						case "Exit":
+							GameManager.instance.ExitFound = true;
+							Debug.Log("Exit has been found");
+
+							break;
+					}
 				}
 
 			}
