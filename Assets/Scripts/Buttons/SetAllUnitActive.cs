@@ -24,8 +24,18 @@ public class SetAllUnitActive : MonoBehaviour
         Dictionary<Vector3, GameObject> UnitMap = GameManager.instance.boardScript.UnitMap;
         foreach (var item in UnitMap)
         {
-            item.Value.SetActive(setActive);
+            if (item.Value.tag!="Enemy")
+            {
+                item.Value.SetActive(setActive);
+            }
         }
+
+        if (setActive)
+            Debug.Log("All units are now revealed");
+        else
+            Debug.Log("All unrevealed units are hidden");
+
+        
 
         setActive = !setActive;
     }

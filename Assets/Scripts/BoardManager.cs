@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class BoardManager : MonoBehaviour
 {
     // Start is called before the first frame update
+    public static Record record = null;
     public int rows = 30;
     public int columns = 30;
     public GameObject[] floorTiles;
@@ -30,22 +31,6 @@ public class BoardManager : MonoBehaviour
     public void SetupScene()
     {
 
-
-        //if (GameObject.Find("Board")!=null)
-        //{
-        //    GameObject[] boardList = GameObject.FindGameObjectsWithTag("board");
-        //    Debug.Log("Board is not null");
-
-        //    foreach (var item in boardList)
-        //    {
-        //        item.SetActive(false);
-        //        Destroy(item);
-        //    }
-
-        //    Debug.Log("Board successfully destroyed");
-        //    obstacles.Clear();
-        //    UnitMap.Clear();
-        //}
         DestroyBoardIfExist();
 
 
@@ -57,16 +42,6 @@ public class BoardManager : MonoBehaviour
 
         HardLevelModify();
 
-
-        //for (int x = 0; x < columns-1; x++)
-        //{
-        //    for (int y = 0; y < rows-1; y++)
-        //    {
-        //        GameObject toInstantiate = floorTiles[0];
-        //        GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity) as GameObject;
-        //        instance.transform.SetParent(boardHolder);
-        //    }
-        //}
         FloorGenerating();
         RandomMapGenerating();
 
@@ -74,16 +49,6 @@ public class BoardManager : MonoBehaviour
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV+"\n"
                +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount+"\n"+"Enemy count: "+EnemyNumber;
 
-        String path = Application.dataPath + "/Scripts" + "/SavedBoard.txt";
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-        path = Application.persistentDataPath + "/SavedBoard.txt";
-#endif
-
-
-        if (File.Exists(path))
-        {
-            GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text += "\n" + "SAVED FILE";
-        }
 
 
     }
@@ -197,6 +162,7 @@ public class BoardManager : MonoBehaviour
             obstacles.Clear();
             UnitMap.Clear();
         }
+        record = new Record();
     }
 
 
@@ -220,7 +186,7 @@ public class BoardManager : MonoBehaviour
             else
             {
                 player.PlayerFOV = 1;
-                player.DistanceDetection = 25;
+                player.DistanceDetection = 20;
                 EnemyNumber = 3;
             }
 
@@ -280,8 +246,6 @@ public class BoardManager : MonoBehaviour
             }
 
         }
-        //UnitGenerating(enemyTiles[0], ENEMY_TILE);
-        //UnitGenerating(enemyTiles[0], ENEMY_TILE);
 
         for (int i = 0; i < EnemyNumber; i++)
         {
@@ -340,6 +304,10 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
+
+
+
+
 
 
 

@@ -6,9 +6,6 @@ using UnityEngine.UI;
 
 public class Player : MovingObject
 {
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-	private Vector2 touchOrigin = -Vector2.one; //Used to store location of screen touch origin for mobile controls.
-#endif
 
 	//private List<Vector3> existingUnits;
 	private List<Vector3> obstacles;
@@ -22,12 +19,9 @@ public class Player : MovingObject
 
 
 
-	private Animator animator;                  //Used to store a reference to the Player's animator component.
-
 	// Start is called before the first frame update
 	void Start()
     {
-		animator = GetComponent<Animator>();
 		base.Start();
 
 	}
@@ -111,7 +105,6 @@ public class Player : MovingObject
 						case "Exit":
 							GameManager.instance.ExitFound = true;
 							Debug.Log("Exit has been found");
-
 							break;
 					}
 				}

@@ -90,8 +90,23 @@ using System.Collections;
 		if (!playerHasKey&&!playerHasCase)
 		{
 			if (GameObject.Find("Canvas/Objective").GetComponent<Text>().text != "Objective: Fetch the Key")
-			GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Fetch the Key";
+			GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Fetch the Key ";
 
+		}
+
+		else if (playerHasKey&&!playerHasCase)
+		{
+			if (GameObject.Find("Canvas/Objective").GetComponent<Text>().text!= "Objective: Open the case")
+			{
+				GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Open the case";
+			}
+		}
+		else
+		{
+			if (GameObject.Find("Canvas/Objective").GetComponent<Text>().text != "Objective: Escape")
+			{
+				GameObject.Find("Canvas/Objective").GetComponent<Text>().text = "Objective: Escape";
+			}
 		}
 
 		if (playersTurn)

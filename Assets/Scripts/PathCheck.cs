@@ -29,7 +29,7 @@ public class PathCheck : MonoBehaviour
     }
 
 
-    public static bool AStarSearchPath(Vector3 currentPos, List<Vector3>obstacle, out int Length)
+    public static bool AStarSearchPath(Vector3 currentPos,Vector3 endPos, List<Vector3>obstacle, out int Length)
     {
         Vector3 startPos;
         Vector3 endPos;

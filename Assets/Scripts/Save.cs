@@ -105,12 +105,9 @@ public class Save
     public void SaveBoard()
     {
         BinaryFormatter bf = new BinaryFormatter();
-        String path = Application.dataPath + "/Scripts" + "/SavedBoard.txt";
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-        path = Application.persistentDataPath+  "/SavedBoard.txt";
-#endif
 
-        FileStream fs = File.Create(path);
+
+        FileStream fs = File.Create(SavePath);
         bf.Serialize(fs, this);
         fs.Close();
         Debug.Log("Board saved successfully to " + SavePath);
@@ -121,17 +118,14 @@ public class Save
 
     public Save LoadBoard()
     {
-        String path = Application.dataPath + "/Scripts" + "/SavedBoard.txt";
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-        path = Application.persistentDataPath + "/SavedBoard.txt";
-#endif
-        if (File.Exists(path))
+
+        if (File.Exists(SavePath))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream fs = new FileStream(path, FileMode.Open);
+            FileStream fs = new FileStream(SavePath, FileMode.Open);
             Save savedBoard = bf.Deserialize(fs) as Save;
             fs.Close();
-            File.Delete(path);
+            File.Delete(SavePath);
             Save.LoadGame = false;
 
             return savedBoard;
