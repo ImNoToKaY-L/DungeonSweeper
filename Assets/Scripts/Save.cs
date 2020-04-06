@@ -11,13 +11,15 @@ public class Save
     [NonSerialized]
     private BoardManager board = GameManager.instance.boardScript;
     [NonSerialized]
+    public static String Evaluationpath = Application.persistentDataPath + "/Evaluation.txt";
+    [NonSerialized]
     public static String SavePath = Application.persistentDataPath + "/SavedBoard.txt";
     [NonSerialized]
     Player player = GameManager.instance.boardScript.player;
     [NonSerialized]
     public static bool LoadGame = false;
 
-
+    public Record record;
     public int rows, columns, EnemyNumber, maxWallSpawnCount,hardLevel;
     public List<UnitPair> unitVector = new List<UnitPair>();
     public List<Vector3S> obstacles = new List<Vector3S>();
@@ -29,6 +31,7 @@ public class Save
 
     public Save()
     {
+        record = board.record;
         rows = board.rows;
         columns = board.columns;
         foreach (var item in board.UnitMap)

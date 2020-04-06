@@ -32,7 +32,6 @@ public class PathCheck : MonoBehaviour
     public static bool AStarSearchPath(Vector3 currentPos,Vector3 endPos, List<Vector3>obstacle, out int Length)
     {
         Vector3 startPos;
-        Vector3 endPos;
         Length = 0;
         Dictionary<Vector3, int> search = new Dictionary<Vector3, int>();
         Dictionary<Vector3, int> cost = new Dictionary<Vector3, int>();
@@ -40,7 +39,6 @@ public class PathCheck : MonoBehaviour
         List<Vector3> hadSearch = new List<Vector3>();
         startPos = currentPos;
         //Currently use the player as the target
-        endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
         search.Add(startPos, GetDistance(startPos, endPos));
         cost.Add(startPos, 0);
         hadSearch.Add(startPos);

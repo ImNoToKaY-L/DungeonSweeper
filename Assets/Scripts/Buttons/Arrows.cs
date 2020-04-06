@@ -19,7 +19,6 @@ public class Arrows : MonoBehaviour
     void MovePlayer()
     {
 
-        //If it's not the player's turn, exit the function.
         if (!GameManager.instance.playersTurn) return;
 
         int horizontal=0, vertical=0;
@@ -43,12 +42,9 @@ public class Arrows : MonoBehaviour
                 vertical = -1;
                 break;
         }
-
-
-
-        //Call AttemptMove passing in the generic parameter Wall, since that is what Player may interact with if they encounter one (by attacking it)
-        //Pass in horizontal and vertical as parameters to specify the direction to move Player in.
         GameManager.instance.playersTurn = false;
+        GameManager.instance.boardScript.record.stepTaken++;
+        //Debug.Log("Current step taken " + GameManager.instance.boardScript.record.stepTaken);
         GameManager.instance.boardScript.player.AttemptMove<Player>(horizontal, vertical);
         //DrawInformation();
     }

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class Record 
 {
-    public static String path = Application.persistentDataPath + "/Record.txt";
+    public bool isCaught = false;
     public int stepTaken;
     public int scanUsed;
-    public int interceptionTriggered;
 
 }

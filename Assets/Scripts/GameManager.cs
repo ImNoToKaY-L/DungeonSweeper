@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.IO;
 
 	using System.Collections.Generic;		//Allows us to use Lists. 
 	using UnityEngine.UI;                   //Allows us to use UI.
@@ -8,7 +9,7 @@ using System.Collections;
 	public class GameManager : MonoBehaviour
 	{
 		public static GameManager instance = null;				//Static instance of GameManager which allows it to be accessed by any other script.
-		public bool playersTurn = true;		//Boolean to check if it's players turn, hidden in inspector but public.
+		public bool playersTurn = true;		
 		public BoardManager boardScript;                       //Store a reference to our BoardManager which will set up the level.
 		public bool playerHasKey = false;
 		public bool playerHasCase = false;
@@ -17,7 +18,7 @@ using System.Collections;
 		public bool enemyIntercepting = false;
 		public bool enemyCooperating = false;
 		public bool KeyFound, CaseFound, ExitFound;
-		
+		public Evaluation evaluation;
 		
 		//Awake is always called before any Start functions
 		void Awake()
@@ -46,7 +47,7 @@ using System.Collections;
 			InitGame();
 		}
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 
 		
 		public void InitGame()
@@ -59,7 +60,8 @@ using System.Collections;
 			boardScript.SetupScene();
 		else
 			boardScript.SetupSceneFromSave(new Save(false).LoadBoard());
-		Debug.Log("Enemies: " + boardScript.EnemyNumber);
+		evaluation =  Evaluation.LoadEvaluation();
+		evaluation.StepPrediction();
 		enemyIntercepting = false;
 		enemyCooperating = false;
 		KeyFound = false;
@@ -79,7 +81,7 @@ using System.Collections;
 
 	public void ProgressToNextLevel()
 	{
-
+		evaluation.Evaluate(boardScript.record);
 		boardScript.NextLevel();
 		InitGame();
 	}

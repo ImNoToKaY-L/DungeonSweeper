@@ -19,6 +19,7 @@ public class Detection : MonoBehaviour
 
     void OnClick()
     {
+        GameManager.instance.boardScript.record.scanUsed++;
         GameManager.instance.boardScript.player.DrawInformation();
         GameManager.instance.playersTurn = false;
     }

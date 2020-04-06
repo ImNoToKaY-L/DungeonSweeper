@@ -29,12 +29,12 @@ public class JumpToUI : MonoBehaviour
 //#endif
         if (File.Exists(Save.SavePath))
         {
-            Save save = new Save().LoadBoard();
-            Debug.Log("Rows are now: "+ save.rows);
-            foreach (var item in save.unitVector)
-            {
-                Debug.Log(item.x+" "+item.y+"  "+item.z);
-            }
+            //Save save = new Save().LoadBoard();
+            //Debug.Log("Rows are now: "+ save.rows);
+            //foreach (var item in save.unitVector)
+            //{
+            //    Debug.Log(item.x+" "+item.y+"  "+item.z);
+            //}
         }
         else
         new Save().SaveBoard();
