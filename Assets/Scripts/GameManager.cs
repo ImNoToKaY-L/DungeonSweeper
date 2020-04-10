@@ -82,6 +82,7 @@ using System.IO;
 	public void ProgressToNextLevel()
 	{
 		evaluation.Evaluate(boardScript.record);
+
 		boardScript.NextLevel();
 		InitGame();
 	}

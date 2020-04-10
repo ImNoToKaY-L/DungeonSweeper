@@ -8,11 +8,11 @@ public class Evaluation
 {
 
 
-    public float rowFactor =1f,
-        columnFactor =1f,
-        wallNumberFactor =1f,
-        playerDetectionModifier =1f,
+    public float sizeFactor = 1f,
+        wallNumberFactor = 1f;
+    public int rowIntFactor,columnIntFactor,playerDetectionModifier = 1,
         playerFOVModifier;
+
 
     [NonSerialized]
     public int idealStepTaken;
@@ -22,7 +22,7 @@ public class Evaluation
 
     public Evaluation()
     {
-
+        
     }
 
 
@@ -59,42 +59,68 @@ public class Evaluation
         float idealStepF = idealStepTaken;
         float stepRatio = stepTakenF/idealStepF;
         Debug.Log("Step ratio = " + stepRatio);
-        float sizeFactor = 1;
-        if (stepRatio >= 3.4)
+        if (stepRatio >= 2.7||record.isCaught)
         {
-            sizeFactor = MergeFactor(sizeFactor, 0.6f);
-            wallNumberFactor = MergeFactor(wallNumberFactor, 0.6f);
+            Debug.Log("Player takes too many steps or is caught by enemy");
+            sizeFactor = MergeFactor(sizeFactor, 0.4f);
+            wallNumberFactor = MergeFactor(wallNumberFactor, 0.4f);
+            rowIntFactor = UnityEngine.Random.Range(-5,0);
+            columnIntFactor = UnityEngine.Random.Range(-5, 0);
         }
-        else if (stepRatio >= 2.7)
+        else if (stepRatio >= 2.2&&!record.isCaught)
         {
-            float Sizemodifier =  1- (0.4f * (1 - DataPosition(2.7f, 3.4f, stepRatio)));
+            float Sizemodifier =  1- (0.5f * (1 - DataPosition(2.2f, 2.7f, stepRatio)));
             sizeFactor = MergeFactor(sizeFactor, Sizemodifier);
-            float Wallmodifier = 1 - (0.4f * (1 - DataPosition(2.7f, 3.4f, stepRatio)));
+            float Wallmodifier = 1 - (0.5f * (1 - DataPosition(2.2f, 2.7f, stepRatio)));
             wallNumberFactor = MergeFactor(wallNumberFactor, Wallmodifier);
+            rowIntFactor = UnityEngine.Random.Range(-5, 0);
+            columnIntFactor = UnityEngine.Random.Range(-5, 0);
 
         }
-        else if (stepRatio >= 2)
+        else if (stepRatio >= 1.8&& !record.isCaught)
         {
-            float Sizemodifier = 1+ (0.3f * (1 - DataPosition(2f, 2.7f, stepRatio)));
+            float Sizemodifier = 1+ (0.15f * (1 - DataPosition(1.8f, 2.2f, stepRatio)));
             sizeFactor = MergeFactor(sizeFactor, Sizemodifier);
-            float Wallmodifier = 1 + (0.35f * (1 - DataPosition(2f, 2.7f, stepRatio)));
+            float Wallmodifier = 1 + (0.3f * (1 - DataPosition(1.8f, 2.2f, stepRatio)));
             wallNumberFactor = MergeFactor(wallNumberFactor, Wallmodifier);
+            rowIntFactor = UnityEngine.Random.Range(0,5);
+            columnIntFactor = UnityEngine.Random.Range(0,5);
 
         }
-        else if(stepRatio>=1)
+        else if(stepRatio>=1&& !record.isCaught)
         {
-            float Sizemodifier = 1 + (0.4f * (1 - DataPosition(1f, 2f, stepRatio)));
+            float Sizemodifier = 1 + (0.2f * (1 - DataPosition(1f, 1.8f, stepRatio)));
             sizeFactor = MergeFactor(sizeFactor, Sizemodifier);
-            float Wallmodifier = 1 + (0.5f * (1 - DataPosition(1f, 2f, stepRatio)));
+            float Wallmodifier = 1 + (0.4f * (1 - DataPosition(1f, 1.8f, stepRatio)));
             wallNumberFactor = MergeFactor(wallNumberFactor, Wallmodifier);
+            rowIntFactor = UnityEngine.Random.Range(0,10);
+            columnIntFactor = UnityEngine.Random.Range(0, 10);
         }
 
         //Debug.Log("Wall number modifier now is " + wallNumberFactor);
-        int totalMapSize = board.rows * board.columns;
+        int usedMapSize;
+        float columnmax = 0, rowmax = 0;
+
+        foreach (var item in board.UnitMap)
+        {
+            if (item.Key.x > columnmax)
+                columnmax = item.Key.x;
+            if (item.Key.y > rowmax)
+                rowmax = item.Key.y;
+        }
+        usedMapSize = Convert.ToInt32(columnmax * rowmax);
         int maxScanSize = 2 * board.player.PlayerFOV + 1;
         maxScanSize *= maxScanSize;
-        
-        
+        int maxScanUsage = usedMapSize / maxScanSize;
+
+        if (record.scanUsed <= maxScanUsage)
+            playerDetectionModifier = -1;   
+        else
+            playerDetectionModifier = 1;
+
+
+        Debug.Log("wall number factor now is " + wallNumberFactor+"\nsize factor "+sizeFactor);
+
 
 
         SaveEvaluation();
@@ -102,6 +128,53 @@ public class Evaluation
 
 
     }
+
+
+
+    public void EvaluatedModify(BoardManager board)
+    {
+        board.rows = Convert.ToInt32(board.rows*sizeFactor)+rowIntFactor;
+        board.columns = Convert.ToInt32(board.columns * sizeFactor) + columnIntFactor;
+        board.maxWallSpawnCount = Convert.ToInt32(board.maxWallSpawnCount * wallNumberFactor);
+        int modifiedPlayerDetection = board.player.DistanceDetection + playerDetectionModifier;
+        if (modifiedPlayerDetection<=10)
+        {
+            board.player.DistanceDetection = 10;
+            board.player.PlayerFOV = 2;
+        }
+        else if (modifiedPlayerDetection>=20)
+        {
+            board.player.DistanceDetection = 20;
+            board.player.PlayerFOV = 1;
+        }
+        else
+        {
+            board.player.DistanceDetection = modifiedPlayerDetection;
+            board.player.PlayerFOV = 2;
+        }
+
+        if (board.rows >= 80) board.rows = 80;
+        if (board.columns >= 80) board.columns = 80;
+
+        if (board.rows <= 20) board.rows = 20;
+        if (board.columns <= 20) board.columns = 20;
+
+        
+
+        if (board.maxWallSpawnCount*5>=(board.rows*board.columns)*0.3)
+        {
+            board.maxWallSpawnCount =Convert.ToInt32((board.rows * board.columns * 0.3) / 5) ;
+        }
+        else if (board.maxWallSpawnCount*5<=(board.rows*board.columns)*0.1)
+        {
+            board.maxWallSpawnCount = Convert.ToInt32((board.rows * board.columns) * 0.1);
+        }
+
+        
+
+    }
+
+
 
 
     private int CalculateStep(Vector3 Key, Vector3 Case, Vector3 Exit)

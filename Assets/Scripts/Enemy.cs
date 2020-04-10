@@ -36,9 +36,17 @@ public class Enemy : MonoBehaviour
     {
         if (initiating)
         {
-            Destroy(GameObject.Find("PathPainting"));
+            foreach (var item in GameObject.FindGameObjectsWithTag("PathPainting"))
+            {
+                Destroy(item);
+            }
 
-            Path = new GameObject("PathPainting").transform;
+                GameObject pp = new GameObject("PathPainting");
+                pp.tag = "PathPainting";
+                Path = pp.transform;
+            
+
+
             initiating = false;
             startPos = this.transform.position;
             //endPos = GameObject.FindGameObjectWithTag("Player").transform.position;
@@ -204,9 +212,9 @@ public class Enemy : MonoBehaviour
 
     private Vector3 GenerateCandidatePos(int column, int row)
     {
-        for (int i = 0; i < column; i++)
+        for (int i = -1; i < column-1; i++)
         {
-            for (int j = 0; j < row; j++)
+            for (int j = -1; j < row-1; j++)
             {
                 Vector3 candidatePos = endPos+ new Vector3(i, j, 0);
                 if (!(Unitmap.ContainsKey(candidatePos) || obstacle.Contains(candidatePos))&&ValidGrid(candidatePos))

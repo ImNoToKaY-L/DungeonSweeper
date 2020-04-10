@@ -168,8 +168,6 @@ public class BoardManager : MonoBehaviour
         if (hardLevel!=1)
         {
 
-            if (hardLevel<=3)
-            {
                 player.PlayerFOV = 2;
                 player.DistanceDetection = 15;
                 double dHardLevel = Convert.ToDouble(hardLevel);
@@ -179,13 +177,11 @@ public class BoardManager : MonoBehaviour
                 columns = Convert.ToInt32(columns * (((dHardLevel / 10) * RandomNumber(1, 3)) + 1));
                 maxWallSpawnCount = Convert.ToInt32(maxWallSpawnCount * ((dHardLevel / 3) + 1));
                 EnemyNumber = 2;
-            }
-            else
-            {
-                player.PlayerFOV = 1;
-                player.DistanceDetection = 20;
-                EnemyNumber = 2;
-            }
+            Evaluation e = Evaluation.LoadEvaluation();
+            e.EvaluatedModify(this);
+            //player.PlayerFOV = 1;
+            //player.DistanceDetection = 20;
+            //EnemyNumber = 2;       
 
         }
         else
@@ -237,7 +233,7 @@ public class BoardManager : MonoBehaviour
                 else
                     candidate = startPos + new Vector3(0, j, 0);
 
-                if (!GridOccupied(candidate))
+                if (!GridOccupied(candidate)&&ValidObstaclePos(candidate))
                 {
                     InstantiateObstacles(wallTiles[0], candidate);
                 }               
@@ -255,6 +251,18 @@ public class BoardManager : MonoBehaviour
         UnitGenerating(itemTiles[0], ITEM_TILE);
         UnitGenerating(itemTiles[1], ITEM_TILE);
         UnitGenerating(itemTiles[2], ITEM_TILE);
+
+
+    }
+
+    private bool ValidObstaclePos(Vector3 position)
+    {
+        if (position.x>=0&&position.y>=0&&position.x<columns-2&&position.y<rows-2)
+        {
+            return true;
+        }
+
+        return false;
 
 
     }

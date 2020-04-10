@@ -174,7 +174,8 @@ public class Player : MovingObject
 			if (GameManager.instance.playerHP<=0)
 			{
 				Debug.Log("GAMEOVER");
-				GameManager.instance.Restart();
+				GameManager.instance.boardScript.record.isCaught = true;
+				GameManager.instance.ProgressToNextLevel();
 			}
 		}
 		if (collision.tag == "Exit")
