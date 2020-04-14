@@ -27,16 +27,6 @@ public class JumpToUI : MonoBehaviour
 //#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 //        path = Application.persistentDataPath + "/SavedBoard.txt";
 //#endif
-        if (File.Exists(Save.SavePath))
-        {
-            //Save save = new Save().LoadBoard();
-            //Debug.Log("Rows are now: "+ save.rows);
-            //foreach (var item in save.unitVector)
-            //{
-            //    Debug.Log(item.x+" "+item.y+"  "+item.z);
-            //}
-        }
-        else
         new Save().SaveBoard();
 
         SceneManager.LoadScene("Demo (Mobile)");

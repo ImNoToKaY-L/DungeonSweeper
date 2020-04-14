@@ -108,7 +108,10 @@ public class Save
     public void SaveBoard()
     {
         BinaryFormatter bf = new BinaryFormatter();
-
+        if (File.Exists(SavePath))
+        {
+            File.Delete(SavePath);
+        }
 
         FileStream fs = File.Create(SavePath);
         bf.Serialize(fs, this);
