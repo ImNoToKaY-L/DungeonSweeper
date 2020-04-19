@@ -175,6 +175,8 @@ public class Player : MovingObject
 			{
 				Debug.Log("GAMEOVER");
 				GameManager.instance.boardScript.record.isCaught = true;
+				GameManager.instance.boardScript.hardLevel--;
+
 				GameManager.instance.ProgressToNextLevel();
 			}
 		}

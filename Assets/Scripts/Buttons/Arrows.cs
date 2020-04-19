@@ -44,7 +44,9 @@ public class Arrows : MonoBehaviour
         }
         GameManager.instance.playersTurn = false;
         GameManager.instance.boardScript.record.stepTaken++;
-        //Debug.Log("Current step taken " + GameManager.instance.boardScript.record.stepTaken);
+        GameObject.FindGameObjectWithTag("Stepinfo").GetComponent<Text>().text = GameManager.instance.boardScript.record.stepTaken.ToString();
+
+        Debug.Log("Current step taken " + GameManager.instance.boardScript.record.stepTaken);
         GameManager.instance.boardScript.player.AttemptMove<Player>(horizontal, vertical);
         //DrawInformation();
     }

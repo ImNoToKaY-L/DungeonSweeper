@@ -2,6 +2,7 @@
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class Evaluation
@@ -44,6 +45,8 @@ public class Evaluation
 
         idealStepTaken = CalculateStep(Key, Case, Exit);
         Debug.Log("Current Board is predicted to use " + idealStepTaken + " steps");
+        GameObject.FindGameObjectWithTag("Prediction").GetComponent<Text>().text ="Predicted "+idealStepTaken.ToString();
+
     }
     public void Evaluate(Record record)
     {

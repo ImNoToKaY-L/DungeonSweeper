@@ -82,6 +82,7 @@ using System.IO;
 	public void ProgressToNextLevel()
 	{
 		evaluation.Evaluate(boardScript.record);
+		GameObject.FindGameObjectWithTag("Stepinfo").GetComponent<Text>().text ="0";
 
 		boardScript.NextLevel();
 		InitGame();

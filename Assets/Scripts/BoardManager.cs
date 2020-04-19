@@ -45,7 +45,7 @@ public class BoardManager : MonoBehaviour
         FloorGenerating();
         RandomMapGenerating();
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV+"\n"
-               +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount+"\n"+"Enemy count: "+EnemyNumber;
+               +"Player detection: "+player.DistanceDetection + "\n"+"Max wall spawn: "+maxWallSpawnCount+"\n"+"Enemy count: "+EnemyNumber + "\n" + "Level: " + hardLevel;
 
 
     }
@@ -108,7 +108,7 @@ public class BoardManager : MonoBehaviour
 
 
         GameObject.FindGameObjectWithTag("ModifierInfo").GetComponent<Text>().text = "Map size: " + rows + "*" + columns + "\n" + "Player fov: " + player.PlayerFOV + "\n"
-       + "Player detection: " + player.DistanceDetection + "\n" + "Max wall spawn: " + maxWallSpawnCount + "\n" + "Enemy count: " + EnemyNumber;
+       + "Player detection: " + player.DistanceDetection + "\n" + "Max wall spawn: " + maxWallSpawnCount + "\n" + "Enemy count: " + EnemyNumber+"\n"+"Level: "+hardLevel;
     }
 
 
@@ -205,11 +205,11 @@ public class BoardManager : MonoBehaviour
 
     public void NextLevel()
     {
-        if (hardLevel<=3)
-        {
+  
+        
             hardLevel++;
 
-        }
+        
     }
 
     public void ResetLevel()
