@@ -45,7 +45,7 @@ public class Evaluation
 
         idealStepTaken = CalculateStep(Key, Case, Exit);
         Debug.Log("Current Board is predicted to use " + idealStepTaken + " steps");
-        GameObject.FindGameObjectWithTag("Prediction").GetComponent<Text>().text ="Predicted "+idealStepTaken.ToString();
+        GameObject.FindGameObjectWithTag("Prediction").GetComponent<Text>().text ="Estimated "+idealStepTaken.ToString();
 
     }
     public void Evaluate(Record record)
